@@ -16,6 +16,24 @@ module RedmineCAS
     setting(:autocreate_users)
   end
 
+  #
+  # https://stackoverflow.com/questions/47397496/redmine-cas-plugin-missing-cas-base-url-parameter
+  #
+  # Seems that there was an old installation of the plugin in the database but not in the plugins folder. 
+  # The data was still there but wasn't the expected and that was generating the issue.
+  #   --- !ruby/hash:ActiveSupport::HashWithIndifferentAccess
+  #    enabled: 'false'
+  #    cas_base_url: https://mycas.com
+  #    cas_logout: 'true'
+  # I updated the data from database in the table settings, the row with name = plugin_redmine_cas to
+  #  --- !ruby/hash-with-ivars:ActionController::Parameters
+  #   elements:
+  #     enabled: '1'
+  #     cas_base_url: https:/mycas.com/
+  #     attributes_mapping: ''
+  #   ivars:
+  #     :@permitted: false
+  #
   def setup!
     return unless enabled?
     CASClient::Frameworks::Rails::Filter.configure(
